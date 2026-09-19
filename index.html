@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b766f" />
+    <title>学途智伴</title>
+    <link rel="stylesheet" href="/styles.css?v=20260913-api-settings" />
+    <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
+    <script defer src="/vendor/katex/katex.min.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="导航">
+        <div class="brand-mark" aria-hidden="true"><i data-lucide="graduation-cap"></i></div>
+        <div class="brand-copy">
+          <strong>学途智伴</strong>
+          <span>个性化学习支持</span>
+        </div>
+
+        <button class="new-chat" id="new-chat" type="button">
+          <i data-lucide="plus" aria-hidden="true"></i>
+          <span>新建对话</span>
+        </button>
+
+        <div class="sidebar-groups">
+          <details class="sidebar-group" open>
+            <summary>
+              <span>学习对话</span>
+              <i class="group-chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <div class="conversation-nav" id="conversation-nav" aria-label="学习对话列表">
+              <p class="conversation-empty" id="conversation-empty">新建并发送消息后的对话会显示在这里</p>
+            </div>
+          </details>
+
+          <details class="sidebar-group" open>
+            <summary>
+              <span>学习功能</span>
+              <i class="group-chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <section class="feature-nav" aria-label="学习功能">
+              <button class="feature-item" type="button" data-prompt="帮我讲解一个课程知识点。">
+                <i data-lucide="circle-help" aria-hidden="true"></i><span>知识答疑</span>
+              </button>
+              <button class="feature-item" type="button" data-prompt="帮我生成练习题。">
+                <i data-lucide="file-question" aria-hidden="true"></i><span>智能出题</span>
+              </button>
+              <button class="feature-item" type="button" data-prompt="帮我制定学习计划。">
+                <i data-lucide="calendar-days" aria-hidden="true"></i><span>学习规划</span>
+              </button>
+              <button class="feature-item" type="button" data-upload>
+                <i data-lucide="file-up" aria-hidden="true"></i><span>资料上传</span>
+              </button>
+            </section>
+          </details>
+
+          <details class="sidebar-group">
+            <summary>
+              <span>课程知识库</span>
+              <i class="group-chevron" data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <ul class="knowledge-base-nav" aria-label="可用课程知识库">
+              <li>高等数学</li>
+              <li>机器人学基础</li>
+              <li>ROS操作系统</li>
+              <li>汽车理论</li>
+              <li>自动控制理论</li>
+              <li>个人知识库</li>
+            </ul>
+          </details>
+        </div>
+
+        <div class="sidebar-foot">
+          <button class="api-settings-trigger" id="api-settings-trigger" type="button" title="配置平台 API" aria-haspopup="dialog" aria-expanded="false">
+            <i data-lucide="settings-2" aria-hidden="true"></i>
+            <span>API 配置</span>
+            <span class="api-config-badge" id="api-config-badge">服务端</span>
+          </button>
+          <div class="service-status">
+            <span class="status-dot"></span>
+            <span id="connection-status">正在检查服务</span>
+          </div>
+        </div>
+        <div class="conversation-context-menu" id="conversation-context-menu" role="menu" hidden>
+          <button type="button" role="menuitem" data-conversation-action="mark">
+            <i data-lucide="bookmark" aria-hidden="true"></i><span>标记对话</span>
+          </button>
+          <button type="button" role="menuitem" data-conversation-action="delete">
+            <i data-lucide="trash-2" aria-hidden="true"></i><span>删除对话</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">学途智伴 · 学习工作台</p>
+            <h1>今天继续推进你的学习</h1>
+          </div>
+          <button class="mobile-nav-toggle" id="mobile-nav-toggle" type="button" title="打开导航" aria-label="打开导航" aria-expanded="false">
+            <i data-lucide="menu" aria-hidden="true"></i>
+          </button>
+          <div class="topbar-actions">
+            <button class="study-clock-trigger" id="study-clock-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">
+              <i data-lucide="clock-3" aria-hidden="true"></i>
+              <span id="study-clock-top-time">--:--</span>
+              <span class="study-clock-trigger-label">学习时钟</span>
+            </button>
+            <div class="topbar-status"><span></span>学习服务已连接</div>
+          </div>
+        </header>
+
+        <section class="conversation" id="conversation" aria-live="polite">
+          <div class="welcome" id="welcome-panel">
+            <div class="workspace-intro">
+              <div class="workspace-symbol" aria-hidden="true"><i data-lucide="sparkles"></i></div>
+              <div>
+                <p class="workspace-kicker">当前学习工作台</p>
+                <h2>从一个明确任务开始</h2>
+                <p>围绕课程问题、练习、资料和复习计划，逐步形成你的学习闭环。</p>
+              </div>
+            </div>
+
+            <div class="workspace-grid">
+              <section class="focus-card" aria-labelledby="focus-card-title">
+                <div class="card-icon" aria-hidden="true"><i data-lucide="messages-square"></i></div>
+                <p>推荐下一步</p>
+                <h3 id="focus-card-title">开始一次知识答疑</h3>
+                <span>输入课程概念、公式、题目或困惑，获得分步骤讲解。</span>
+                <button class="primary-action" type="button" data-focus-input>
+                  提出课程问题 <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+                </button>
+              </section>
+
+              <div class="task-grid" aria-label="快捷学习任务">
+                <button class="task-card" type="button" data-query="生成10道高等数学极限练习题，不显示答案。">
+                  <i data-lucide="file-question" aria-hidden="true"></i>
+                  <span>专项练习</span>
+                  <strong>先做题，后批改</strong>
+                </button>
+                <button class="task-card" type="button" data-query="10天后考高等数学，极限和导数薄弱，每天能学2小时，帮我制定计划。">
+                  <i data-lucide="calendar-days" aria-hidden="true"></i>
+                  <span>学习规划</span>
+                  <strong>按时间安排任务</strong>
+                </button>
+                <button class="task-card" type="button" data-upload>
+                  <i data-lucide="file-up" aria-hidden="true"></i>
+                  <span>资料入库</span>
+                  <strong>补充个人课程资料</strong>
+                </button>
+              </div>
+            </div>
+
+            <section class="recent-learning" aria-labelledby="recent-learning-title">
+              <div class="section-heading">
+                <div>
+                  <p>学习轨迹</p>
+                  <h3 id="recent-learning-title">最近学习对话</h3>
+                </div>
+                <i data-lucide="clock-3" aria-hidden="true"></i>
+              </div>
+              <div class="recent-learning-list" id="recent-learning-list">
+                <p id="recent-learning-empty">开始学习后，最近对话会显示在这里。</p>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <footer class="composer-wrap">
+          <div class="attachment-note" id="attachment-note" hidden>
+            <span role="status" aria-live="polite">已选择附件</span>
+            <button id="remove-attachment" type="button">移除</button>
+          </div>
+          <div class="knowledge-base-picker" id="knowledge-base-picker" hidden>
+            <label for="knowledge-base-select">资料写入知识库</label>
+            <select id="knowledge-base-select" aria-describedby="knowledge-base-help">
+              <option value="">请选择目标知识库</option>
+              <option value="高等数学">高等数学</option>
+              <option value="机器人学基础">机器人学基础</option>
+              <option value="ROS操作系统">ROS操作系统</option>
+              <option value="汽车理论">汽车理论</option>
+              <option value="自动控制理论">自动控制理论</option>
+              <option value="个人知识库">个人知识库</option>
+            </select>
+            <span id="knowledge-base-help">上传资料时必选，可写入个人知识库保存其他课程资料。</span>
+          </div>
+          <form class="composer" id="composer">
+            <input id="file-input" type="file" accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.txt" multiple hidden />
+            <button class="attach-button" id="attach-button" type="button" title="添加附件" aria-label="添加附件"><i data-lucide="paperclip"></i></button>
+            <textarea id="message-input" rows="1" placeholder="输入学习问题或任务" aria-label="输入消息"></textarea>
+            <button class="send-button" id="send-button" type="submit" aria-label="发送消息"><i data-lucide="arrow-up"></i></button>
+            <button class="stop-button" id="stop-button" type="button" hidden>停止生成</button>
+          </form>
+          <p class="composer-hint">Enter 发送，Shift + Enter 换行。平台 API 密钥可在左下角配置，请仅在受信设备使用。</p>
+        </footer>
+      </main>
+    </div>
+    <div class="mobile-nav-backdrop" id="mobile-nav-backdrop" hidden></div>
+    <section class="study-clock-modal" id="study-clock-modal" role="dialog" aria-modal="true" aria-labelledby="study-clock-title" hidden>
+      <div class="study-clock-panel">
+        <header class="study-clock-header">
+          <h2 id="study-clock-title">学习时钟</h2>
+          <button class="clock-close-button" id="clock-close-button" type="button" title="关闭学习时钟" aria-label="关闭学习时钟">
+            <i data-lucide="x" aria-hidden="true"></i>
+          </button>
+        </header>
+
+        <div class="clock-tabs" role="tablist" aria-label="学习时钟模式">
+          <button class="clock-tab active" type="button" role="tab" aria-selected="true" data-clock-mode="clock">
+            <i data-lucide="clock-3" aria-hidden="true"></i><span>时钟</span>
+          </button>
+          <button class="clock-tab" type="button" role="tab" aria-selected="false" data-clock-mode="countdown">
+            <i data-lucide="timer" aria-hidden="true"></i><span>倒计时</span>
+          </button>
+          <button class="clock-tab" type="button" role="tab" aria-selected="false" data-clock-mode="stopwatch">
+            <i data-lucide="timer-reset" aria-hidden="true"></i><span>秒表</span>
+          </button>
+          <button class="clock-tab" type="button" role="tab" aria-selected="false" data-clock-mode="focus">
+            <i data-lucide="book-open" aria-hidden="true"></i><span>自习</span>
+          </button>
+        </div>
+
+        <section class="clock-mode" data-clock-panel="clock">
+          <p class="clock-kicker">现在时间</p>
+          <output class="study-time-display" id="clock-current-time">--:--:--</output>
+          <p class="clock-date" id="clock-current-date"></p>
+          <p class="clock-note">保持专注，完成眼前这一小步。</p>
+        </section>
+
+        <section class="clock-mode" data-clock-panel="countdown" hidden>
+          <p class="clock-kicker">倒计时</p>
+          <output class="study-time-display" id="countdown-display">25:00</output>
+          <div class="clock-inputs" aria-label="设置倒计时">
+            <label>时<input id="countdown-hours" type="number" min="0" max="23" value="0" /></label>
+            <label>分<input id="countdown-minutes" type="number" min="0" max="59" value="25" /></label>
+            <label>秒<input id="countdown-seconds" type="number" min="0" max="59" value="0" /></label>
+          </div>
+          <div class="clock-controls">
+            <button class="clock-primary-button" id="countdown-toggle" type="button">开始</button>
+            <button class="clock-secondary-button" id="countdown-reset" type="button" title="重置倒计时"><i data-lucide="rotate-ccw" aria-hidden="true"></i></button>
+          </div>
+        </section>
+
+        <section class="clock-mode" data-clock-panel="stopwatch" hidden>
+          <p class="clock-kicker">秒表</p>
+          <output class="study-time-display" id="stopwatch-display">00:00:00</output>
+          <p class="clock-note">用于记录一道题、一个知识点或一次自习的实际用时。</p>
+          <div class="clock-controls">
+            <button class="clock-primary-button" id="stopwatch-toggle" type="button">开始</button>
+            <button class="clock-secondary-button" id="stopwatch-reset" type="button" title="重置秒表"><i data-lucide="rotate-ccw" aria-hidden="true"></i></button>
+          </div>
+        </section>
+
+        <section class="clock-mode" data-clock-panel="focus" hidden>
+          <p class="clock-kicker">自习专注</p>
+          <output class="study-time-display" id="focus-display">25:00</output>
+          <label class="focus-duration-label">本次专注时长
+            <select id="focus-minutes">
+              <option value="25">25 分钟</option>
+              <option value="45">45 分钟</option>
+              <option value="60">60 分钟</option>
+            </select>
+          </label>
+          <div class="clock-controls">
+            <button class="clock-primary-button" id="focus-toggle" type="button">开始自习</button>
+            <button class="clock-secondary-button" id="focus-reset" type="button" title="重置自习时钟"><i data-lucide="rotate-ccw" aria-hidden="true"></i></button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="api-settings-modal" id="api-settings-modal" role="dialog" aria-modal="true" aria-labelledby="api-settings-title" hidden>
+      <div class="api-settings-panel">
+        <header class="api-settings-header">
+          <div>
+            <p class="settings-kicker">连接设置</p>
+            <h2 id="api-settings-title">配置平台 API</h2>
+          </div>
+          <button class="settings-close-button" id="api-settings-close" type="button" title="关闭 API 配置" aria-label="关闭 API 配置">
+            <i data-lucide="x" aria-hidden="true"></i>
+          </button>
+        </header>
+
+        <form class="api-settings-form" id="api-settings-form">
+          <label class="settings-field" for="api-base-url">
+            <span>API 地址</span>
+            <input id="api-base-url" name="apiBaseUrl" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com/api/v1" required />
+            <small>填写平台 API 的基础地址，不要在末尾添加具体接口路径。</small>
+          </label>
+
+          <label class="settings-field" for="api-key">
+            <span>API 密钥</span>
+            <div class="secret-input-wrap">
+              <input id="api-key" name="apiKey" type="password" autocomplete="off" placeholder="请输入平台生成的 API 密钥" />
+              <button class="secret-toggle" id="api-key-toggle" type="button" title="显示密钥" aria-label="显示密钥" aria-pressed="false">
+                <i data-lucide="eye" aria-hidden="true"></i>
+              </button>
+            </div>
+            <small id="api-key-help">密钥不会显示在地址栏；当前配置仅保存在服务端内存中，重启服务后需要重新输入。</small>
+          </label>
+
+          <p class="api-settings-source" id="api-settings-source" role="status"></p>
+          <p class="api-settings-feedback" id="api-settings-feedback" role="status" aria-live="polite"></p>
+
+          <footer class="api-settings-actions">
+            <button class="settings-reset-button" id="api-settings-reset" type="button">恢复服务端配置</button>
+            <div class="settings-action-group">
+              <button class="settings-cancel-button" id="api-settings-cancel" type="button">取消</button>
+              <button class="settings-save-button" id="api-settings-save" type="submit">保存配置</button>
+            </div>
+          </footer>
+        </form>
+      </div>
+    </section>
+
+    <template id="message-template">
+      <article class="message">
+        <div class="avatar"></div>
+        <div class="message-content">
+          <div class="message-meta"></div>
+          <div class="message-body"></div>
+          <div class="message-actions" hidden>
+            <button type="button" class="feedback-button" data-like="1">有帮助</button>
+            <button type="button" class="feedback-button" data-like="-1">需改进</button>
+          </div>
+        </div>
+      </article>
+    </template>
+    <script type="module" src="/app.js?v=20260913-api-settings"></script>
+  </body>
+</html>
