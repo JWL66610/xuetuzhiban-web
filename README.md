@@ -37,7 +37,7 @@
 ### 1. 获取代码并安装依赖
 
 ```bash
-git clone <你的 GitHub 仓库地址>
+git clone <https://github.com/JWL66610/xuetuzhiban-web>
 cd xuetuzhiban-web
 npm install
 ```
